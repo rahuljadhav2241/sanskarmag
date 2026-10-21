@@ -1,0 +1,34 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Next.js build output
+.next
+out
+
+# Git
+.git
+.gitignore
+
+# Environment files (never bake secrets into docker image)
+.env*.local
+.env
+
+# Editor & IDE
+.vscode
+.idea
+
+# Log files
+*.log
+*.log.*
+
+# Sanity Studio sub-projects & backups (if deployed separately)
+sanity_backend
+sanity
+sanskarmag.zip
+reports
+QA_REPORT*.md
+WEBSITE_AI_REVIEW.md
