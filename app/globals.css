@@ -3915,8 +3915,8 @@ a.btn:hover, .btn:hover, .tsw-btn:hover, .btn-primary:hover, .btn-secondary:hove
 }
 
 .page-intro-header-banner {
-  margin: -20px -40px 32px -40px;
-  padding: 48px 40px 40px 40px;
+  margin: 0 calc(-1 * clamp(16px, 2.5vw, 40px)) 32px calc(-1 * clamp(16px, 2.5vw, 40px));
+  padding: 42px clamp(16px, 2.5vw, 40px) 46px clamp(16px, 2.5vw, 40px);
 }
 
 .editorial-world-row {
@@ -4033,7 +4033,7 @@ a.btn:hover, .btn:hover, .tsw-btn:hover, .btn-primary:hover, .btn-secondary:hove
     width: 100% !important;
   }
   .page-intro-header-banner {
-    margin: -16px -16px 24px -16px !important;
+    margin: 0 -16px 24px -16px !important;
     padding: 28px 16px 24px 16px !important;
   }
   .latest-articles-grid {

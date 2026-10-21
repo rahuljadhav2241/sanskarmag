@@ -15,8 +15,9 @@ export function PageIntro({ eyebrow, title, intro }: Props) {
         position: "relative",
         overflow: "hidden",
         borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
-        padding: "42px 0 46px",
-        marginBottom: "32px",
+        margin: "0 calc(-1 * clamp(16px, 2.5vw, 40px)) 32px calc(-1 * clamp(16px, 2.5vw, 40px))",
+        padding: "42px clamp(16px, 2.5vw, 40px) 46px clamp(16px, 2.5vw, 40px)",
+        boxSizing: "border-box",
       }}
     >
       {/* Background Subtle Gradient Wave Accent */}
@@ -35,15 +36,12 @@ export function PageIntro({ eyebrow, title, intro }: Props) {
       />
 
       <div
-        className="site-shell"
         style={{
           position: "relative",
           zIndex: 2,
           width: "100%",
           maxWidth: "100%",
           margin: "0 auto",
-          padding: "0 clamp(16px, 2.5vw, 40px)",
-          boxSizing: "border-box",
         }}
       >
         {eyebrow && (

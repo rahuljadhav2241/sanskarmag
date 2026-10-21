@@ -47,14 +47,14 @@ export default function LeadersPage() {
   }, [leaders, searchQuery]);
 
   return (
-    <main style={{ background: "var(--editorial-ivory, #F7F5EF)", minHeight: "100vh", paddingBottom: "80px" }}>
+    <main className="site-shell inner-shell" style={{ background: "var(--editorial-ivory, #F7F5EF)", minHeight: "100vh", paddingBottom: "80px" }}>
       <PageIntro
         title="Web Profiles Wall"
         intro="Discover the digital presence of our visionary leaders driving innovation and shaping the future."
         eyebrow="Executive Directory"
       />
 
-      <div style={{ width: "100%", maxWidth: "100%", margin: "0 auto", padding: "0 clamp(16px, 2.5vw, 40px)", boxSizing: "border-box" }}>
+      <div style={{ width: "100%", maxWidth: "100%", margin: "0 auto", boxSizing: "border-box" }}>
         {/* Executive Directory Container */}
         <section
           style={{
