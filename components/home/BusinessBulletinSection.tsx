@@ -31,7 +31,7 @@ export function BusinessBulletinSection() {
             <h2 className="tsw-title">Enterprise &amp; Market Intelligence</h2>
           </div>
         </div>
-        <div className="tsw-bulletin-grid grid-sidebar-layout">
+        <div className="tsw-bulletin-grid">
           <div className="skeleton-pulse" style={{ width: "100%", aspectRatio: "16 / 10", borderRadius: 8 }} />
           <div className="tsw-bulletin-list">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -67,7 +67,7 @@ export function BusinessBulletinSection() {
         </Link>
       </div>
 
-      <div className="tsw-bulletin-grid grid-sidebar-layout">
+      <div className="tsw-bulletin-grid">
         {/* LEFT — lead feature */}
         {lead && (
           <article className="tsw-card tsw-bulletin-lead">
