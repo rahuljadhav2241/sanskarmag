@@ -1,0 +1,58 @@
+name: Deploy TSW to VPS Docker
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Hostinger VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH and Redeploy Docker Container
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          timeout: 120s
+          command_timeout: 30m
+          script_stop: true
+          script: |
+            echo "🚀 Starting automated deployment for TSW..."
+            
+            # Ensure directory exists
+            if [ ! -d "/docker/tsw" ]; then
+              echo "Directory /docker/tsw not found! Cloning repository..."
+              git clone https://github.com/rahuljadhav2241/sanskarmag.git /docker/tsw
+            fi
+            
+            cd /docker/tsw
+            
+            # Pull latest changes cleanly without overwriting .env
+            echo "📥 Fetching latest commits from origin/main..."
+            git fetch origin main
+            git reset --hard origin/main
+            
+            # Build and recreate container
+            echo "🐳 Building and starting Docker container..."
+            docker compose up -d --build --remove-orphans
+            
+            # Clean unused builder caches / dangling images to preserve VPS disk space
+            echo "🧹 Pruning old dangling images..."
+            docker image prune -f
+            
+            # Check container health status
+            echo "✅ Checking running container status:"
+            docker ps --filter "name=tsw-frontend"
+            
+            echo "🎉 TSW deployed successfully!"
