@@ -1,17 +1,15 @@
-version: '3.8'
+name: tsw
 
 services:
-  web:
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: sanskarmag-app
+    container_name: tsw-frontend
+    image: tsw-frontend:latest
     restart: unless-stopped
     ports:
-      # If your VPS has Nginx installed on the host, bind to localhost:
       - "127.0.0.1:3000:3000"
-      # If you want it directly accessible on public port 3000, use:
-      # - "3000:3000"
     env_file:
       - .env
     environment:
