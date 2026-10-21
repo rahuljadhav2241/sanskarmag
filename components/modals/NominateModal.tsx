@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Award, CheckCircle2, Send, Phone, Mail, User, Building, Layers } from "lucide-react";
+import { createPortal } from "react-dom";
+import { X, CheckCircle2, Send, Phone, Mail, User, Building, Layers } from "lucide-react";
 
 interface Props {
   isOpen: boolean;
@@ -16,22 +17,35 @@ export function NominateModal({ isOpen, onClose }: Props) {
   const [industry, setIndustry] = useState("Technology & AI");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Lock background scrolling while modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
+
+  // Handle escape key to close modal
+  useEffect(() => {
+    if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         handleResetAndClose();
       }
     };
-    if (isOpen) {
-      window.addEventListener("keydown", handleKeyDown);
-    }
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen]);
-
-  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,18 +64,22 @@ export function NominateModal({ isOpen, onClose }: Props) {
     onClose();
   };
 
-  return (
+  if (!isOpen || !mounted || typeof document === "undefined" || !document.body) return null;
+
+  return createPortal(
     <div
       style={{
         position: "fixed",
         inset: 0,
-        zIndex: 9999,
+        zIndex: 99999,
         background: "rgba(10, 13, 22, 0.82)",
         backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "20px",
+        padding: "16px",
+        overflowY: "auto",
         cursor: "pointer",
       }}
       onClick={handleResetAndClose}
@@ -72,21 +90,26 @@ export function NominateModal({ isOpen, onClose }: Props) {
           cursor: "default",
           width: "100%",
           maxWidth: "540px",
+          maxHeight: "min(92vh, 640px)",
           background: "#FFFFFF",
           border: "1px solid #E5E7EB",
           borderRadius: "16px",
-          overflow: "hidden",
-          boxShadow: "0 20px 50px rgba(0, 0, 0, 0.25)",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.4)",
           position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          margin: "auto", // Essential for flexbox centering without negative-overflow clipping
+          overflow: "hidden",
         }}
       >
-        {/* Header Bar */}
+        {/* Header Bar - fixed at top */}
         <div
           style={{
             background: "linear-gradient(135deg, #102A43 0%, #0B1E30 100%)",
             color: "#FFFFFF",
-            padding: "24px 28px",
+            padding: "18px 24px",
             position: "relative",
+            flexShrink: 0,
           }}
         >
           <button
@@ -94,8 +117,8 @@ export function NominateModal({ isOpen, onClose }: Props) {
             onClick={handleResetAndClose}
             style={{
               position: "absolute",
-              top: "18px",
-              right: "18px",
+              top: "16px",
+              right: "16px",
               background: "rgba(255, 255, 255, 0.12)",
               border: "none",
               borderRadius: "50%",
@@ -105,6 +128,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
               display: "grid",
               placeItems: "center",
               cursor: "pointer",
+              transition: "background 0.2s ease",
             }}
             aria-label="Close nominate modal"
           >
@@ -115,8 +139,8 @@ export function NominateModal({ isOpen, onClose }: Props) {
             style={{
               fontSize: "10px",
               fontWeight: 800,
-              letterSpacing: "2px",
-              color: "#102A43",
+              letterSpacing: "1.5px",
+              color: "#93C5FD",
               textTransform: "uppercase",
               display: "block",
               marginBottom: "4px",
@@ -125,17 +149,17 @@ export function NominateModal({ isOpen, onClose }: Props) {
             EXECUTIVE NOMINATION
           </span>
 
-          <h2 className="font-serif" style={{ fontSize: "24px", fontWeight: 900, color: "#FFFFFF", margin: "0 0 6px" }}>
+          <h2 className="font-serif" style={{ fontSize: "21px", fontWeight: 900, color: "#FFFFFF", margin: "0 0 4px", lineHeight: 1.25 }}>
             Nominate Now — Get Published
           </h2>
 
-          <p style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.8)", margin: 0, lineHeight: 1.45 }}>
+          <p style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.8)", margin: 0, lineHeight: 1.4 }}>
             Feature your leadership story, enterprise breakthrough, or brand in The Success World magazine & executive briefings.
           </p>
         </div>
 
-        {/* Form Body or Success Confirmation */}
-        <div style={{ padding: "24px 28px" }}>
+        {/* Form Body or Success Confirmation - scrollable */}
+        <div style={{ padding: "18px 24px 22px", overflowY: "auto", flex: 1 }}>
           {submitted ? (
             <div style={{ textAlign: "center", padding: "20px 0" }}>
               <div
@@ -171,7 +195,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {/* Full Name Input */}
               <div>
                 <label style={{ fontSize: "11px", fontWeight: 800, color: "#102A43", textTransform: "uppercase", letterSpacing: "0.8px", display: "block", marginBottom: "4px" }}>
@@ -192,6 +216,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
                       fontSize: "13px",
                       color: "#102A43",
                       outline: "none",
+                      boxSizing: "border-box",
                     }}
                   />
                   <User size={14} style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", color: "#94A3B8" }} />
@@ -199,7 +224,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
               </div>
 
               {/* Email & Phone Grid */}
-              <div className="grid-split-layout" style={{ gap: "12px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px" }}>
                 <div>
                   <label style={{ fontSize: "11px", fontWeight: 800, color: "#102A43", textTransform: "uppercase", letterSpacing: "0.8px", display: "block", marginBottom: "4px" }}>
                     Work Email *
@@ -219,6 +244,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
                         fontSize: "13px",
                         color: "#102A43",
                         outline: "none",
+                        boxSizing: "border-box",
                       }}
                     />
                     <Mail size={14} style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", color: "#94A3B8" }} />
@@ -244,6 +270,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
                         fontSize: "13px",
                         color: "#102A43",
                         outline: "none",
+                        boxSizing: "border-box",
                       }}
                     />
                     <Phone size={14} style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", color: "#94A3B8" }} />
@@ -252,7 +279,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
               </div>
 
               {/* Company & Industry Grid */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px" }}>
                 <div>
                   <label style={{ fontSize: "11px", fontWeight: 800, color: "#102A43", textTransform: "uppercase", letterSpacing: "0.8px", display: "block", marginBottom: "4px" }}>
                     Company & Designation
@@ -271,6 +298,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
                         fontSize: "13px",
                         color: "#102A43",
                         outline: "none",
+                        boxSizing: "border-box",
                       }}
                     />
                     <Building size={14} style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", color: "#94A3B8" }} />
@@ -295,6 +323,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
                         outline: "none",
                         background: "#FFFFFF",
                         cursor: "pointer",
+                        boxSizing: "border-box",
                       }}
                     >
                       <option value="Technology & AI">Technology & AI</option>
@@ -330,18 +359,19 @@ export function NominateModal({ isOpen, onClose }: Props) {
                     color: "#102A43",
                     outline: "none",
                     resize: "none",
+                    boxSizing: "border-box",
                   }}
                 />
               </div>
 
               {/* Action Buttons: Cancel/Close & Submit */}
-              <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+              <div style={{ display: "flex", gap: "10px", marginTop: "6px" }}>
                 <button
                   type="button"
                   onClick={handleResetAndClose}
                   style={{
                     flex: "1",
-                    padding: "11px",
+                    padding: "10px 14px",
                     fontSize: "13px",
                     fontWeight: 700,
                     borderRadius: "8px",
@@ -363,7 +393,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
                   className="btn btn-blue-gradient"
                   style={{
                     flex: "1.6",
-                    padding: "11px",
+                    padding: "10px 14px",
                     fontSize: "13px",
                     fontWeight: 800,
                     borderRadius: "8px",
@@ -383,6 +413,7 @@ export function NominateModal({ isOpen, onClose }: Props) {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
